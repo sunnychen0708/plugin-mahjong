@@ -1,0 +1,5 @@
+MahjongPlay-TW 3D
+
+This is an independent Taiwanese 16-tile rules implementation inspired by the user-facing
+3D table interaction style of MahjongPlay. It does not bundle the original plugin binary or
+its resource pack. The included 3D tile textures and models were newly generated for this build.

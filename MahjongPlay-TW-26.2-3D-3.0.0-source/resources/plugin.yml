@@ -1,0 +1,28 @@
+name: MahjongPlayTW
+version: '3.0.0'
+main: com.mahjongplay.tw.TaiwanMahjongPlugin
+api-version: '26.2'
+author: OpenAI adaptation
+website: https://modrinth.com/plugin/mahjongplay
+description: 繁體中文台灣16張麻將，保留實體3D牌桌與右鍵操作。
+commands:
+  mahjong:
+    description: 台灣麻將主指令
+    usage: /mahjong help
+    aliases: [mj, 台麻, 麻將]
+permissions:
+  mahjongplay.command.create:
+    description: 建立實體麻將牌桌
+    default: op
+  mahjongplay.command.destroy:
+    description: 刪除實體麻將牌桌
+    default: op
+  mahjongplay.command.bot:
+    description: 加入電腦玩家
+    default: true
+  mahjongplay.command.kick:
+    description: 移除牌桌座位
+    default: op
+  mahjongplay.command.start:
+    description: 強制補滿電腦並開始
+    default: op
