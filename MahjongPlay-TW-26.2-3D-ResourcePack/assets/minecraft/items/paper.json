@@ -1,0 +1,314 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "entries": [
+      {
+        "threshold": 1.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_back"
+        }
+      },
+      {
+        "threshold": 2.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m1"
+        }
+      },
+      {
+        "threshold": 3.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m2"
+        }
+      },
+      {
+        "threshold": 4.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m3"
+        }
+      },
+      {
+        "threshold": 5.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m4"
+        }
+      },
+      {
+        "threshold": 6.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m5"
+        }
+      },
+      {
+        "threshold": 7.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m6"
+        }
+      },
+      {
+        "threshold": 8.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m7"
+        }
+      },
+      {
+        "threshold": 9.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m8"
+        }
+      },
+      {
+        "threshold": 10.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_m9"
+        }
+      },
+      {
+        "threshold": 11.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p1"
+        }
+      },
+      {
+        "threshold": 12.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p2"
+        }
+      },
+      {
+        "threshold": 13.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p3"
+        }
+      },
+      {
+        "threshold": 14.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p4"
+        }
+      },
+      {
+        "threshold": 15.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p5"
+        }
+      },
+      {
+        "threshold": 16.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p6"
+        }
+      },
+      {
+        "threshold": 17.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p7"
+        }
+      },
+      {
+        "threshold": 18.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p8"
+        }
+      },
+      {
+        "threshold": 19.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_p9"
+        }
+      },
+      {
+        "threshold": 20.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s1"
+        }
+      },
+      {
+        "threshold": 21.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s2"
+        }
+      },
+      {
+        "threshold": 22.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s3"
+        }
+      },
+      {
+        "threshold": 23.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s4"
+        }
+      },
+      {
+        "threshold": 24.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s5"
+        }
+      },
+      {
+        "threshold": 25.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s6"
+        }
+      },
+      {
+        "threshold": 26.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s7"
+        }
+      },
+      {
+        "threshold": 27.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s8"
+        }
+      },
+      {
+        "threshold": 28.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_s9"
+        }
+      },
+      {
+        "threshold": 29.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_east"
+        }
+      },
+      {
+        "threshold": 30.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_south"
+        }
+      },
+      {
+        "threshold": 31.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_west"
+        }
+      },
+      {
+        "threshold": 32.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_north"
+        }
+      },
+      {
+        "threshold": 33.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_red"
+        }
+      },
+      {
+        "threshold": 34.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_green"
+        }
+      },
+      {
+        "threshold": 35.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_white"
+        }
+      },
+      {
+        "threshold": 36.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_spring"
+        }
+      },
+      {
+        "threshold": 37.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_summer"
+        }
+      },
+      {
+        "threshold": 38.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_autumn"
+        }
+      },
+      {
+        "threshold": 39.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_winter"
+        }
+      },
+      {
+        "threshold": 40.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_plum"
+        }
+      },
+      {
+        "threshold": 41.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_orchid"
+        }
+      },
+      {
+        "threshold": 42.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_bamboo_flower"
+        }
+      },
+      {
+        "threshold": 43.0,
+        "model": {
+          "type": "minecraft:model",
+          "model": "mahjongplay:item/tile_chrysanthemum"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/paper"
+    }
+  }
+}
