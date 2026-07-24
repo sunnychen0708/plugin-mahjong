@@ -114,6 +114,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
                 case "list", "列表" -> { manager.listTables(sender); yield true; }
                 case "create", "建立", "創建", "创建" -> handleCreate(sender, args);
                 case "destroy", "刪除", "删除" -> handleDestroy(sender, args);
+                case "protection", "protect", "保護", "保护" -> handleProtection(sender, args);
                 case "join", "加入" -> handlePlayer(sender, p -> manager.join(p, args.length >= 2 ? args[1] : null));
                 case "leave", "離開", "离开" -> handlePlayer(sender, manager::leave);
                 case "ready", "準備", "准备" -> handlePlayer(sender, p -> manager.ready(p, true));
@@ -154,6 +155,25 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
             return true;
         }
         manager.destroy(sender, args[1]);
+        return true;
+    }
+
+    private boolean handleProtection(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("mahjongplay.command.protection")) return noPermission(sender);
+        if (args.length < 3) {
+            sender.sendMessage(PREFIX + "用法：/mahjong protection <牌桌編號> <on|off>");
+            return true;
+        }
+        Boolean enabled = switch (args[2].toLowerCase(Locale.ROOT)) {
+            case "on", "true", "enable", "enabled", "開", "开启", "啟用" -> true;
+            case "off", "false", "disable", "disabled", "關", "关闭", "停用" -> false;
+            default -> null;
+        };
+        if (enabled == null) {
+            sender.sendMessage(PREFIX + "保護設定必須是 on 或 off。");
+            return true;
+        }
+        manager.setBlockProtection(sender, args[1], enabled);
         return true;
     }
 
@@ -225,6 +245,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
         sender.sendMessage("§e/mahjong action hu|pong|kong|chi|pass §7文字備用操作");
         sender.sendMessage("§e/mahjong info §7資訊；§e/mahjong score §7分數；§e/mahjong rules §7規則");
         sender.sendMessage("§e/mahjong rerender §7重新生成顯示實體（看不到牌時使用）");
+        sender.sendMessage("§e/mahjong protection <編號> <on|off> §7切換牌桌方塊保護（管理員）");
         sender.sendMessage("§c必須安裝隨附的 26.2 材質包，否則麻將牌會顯示成紙張。");
     }
 
@@ -242,10 +263,13 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return filter(args[0], List.of("help", "rules", "list", "create", "destroy", "join", "leave", "ready", "unready", "bot", "kick", "start", "hand", "info", "score", "discard", "action", "rerender"));
+            return filter(args[0], List.of("help", "rules", "list", "create", "destroy", "protection", "join", "leave", "ready", "unready", "bot", "kick", "start", "hand", "info", "score", "discard", "action", "rerender"));
         }
-        if (args.length == 2 && (args[0].equalsIgnoreCase("join") || args[0].equalsIgnoreCase("destroy"))) {
+        if (args.length == 2 && (args[0].equalsIgnoreCase("join") || args[0].equalsIgnoreCase("destroy") || args[0].equalsIgnoreCase("protection") || args[0].equalsIgnoreCase("protect"))) {
             return filter(args[1], manager.tables.keySet());
+        }
+        if (args.length == 3 && (args[0].equalsIgnoreCase("protection") || args[0].equalsIgnoreCase("protect"))) {
+            return filter(args[2], List.of("on", "off"));
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("action")) {
             return filter(args[1], List.of("hu", "pong", "kong", "chi", "pass"));
@@ -275,7 +299,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         for (Table table : manager.tables.values()) {
-            if (manager.isTableBlock(table, event.getBlock())) {
+            if (table.blockProtection && manager.isTableBlock(table, event.getBlock())) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage(PREFIX + "這是麻將牌桌的一部分，請用 /mahjong destroy " + table.id + " 刪除。");
                 return;
@@ -323,6 +347,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
         final int z;
         final List<Seat> seats = new ArrayList<>();
         final List<Entity> entities = new ArrayList<>();
+        boolean blockProtection = true;
         GameState game;
         long claimDeadline;
         long botActionAt;
@@ -398,8 +423,20 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
                     default -> "大廳";
                 };
                 sender.sendMessage("§e#" + table.id + " §f" + table.name + " §7玩家 " + table.seats.size() + "/4，" + state
-                        + "，座標 " + table.x + " " + (table.y + 1) + " " + table.z + "（" + table.worldName + "）");
+                        + "，方塊保護 " + (table.blockProtection ? "§a開啟" : "§c關閉")
+                        + "§7，座標 " + table.x + " " + (table.y + 1) + " " + table.z + "（" + table.worldName + "）");
             }
+        }
+
+        void setBlockProtection(CommandSender sender, String id, boolean enabled) {
+            Table table = tables.get(id);
+            if (table == null) {
+                sender.sendMessage(PREFIX + "找不到牌桌 #" + id + "。");
+                return;
+            }
+            table.blockProtection = enabled;
+            saveTables();
+            sender.sendMessage(PREFIX + "牌桌 #" + id + " 的方塊保護已" + (enabled ? "開啟" : "關閉") + "。");
         }
 
         void join(Player player, String requestedId) {
@@ -830,7 +867,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
             World world = table.world();
             if (world == null) return;
             clearEntities(table);
-            buildPhysicalTable(table);
+            if (table.blockProtection) buildPhysicalTable(table);
 
             Location center = table.center();
             String statusText = buildStatusText(table);
@@ -915,7 +952,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
                 ItemDisplay back = spawnTileDisplay(table, loc, 1, yaw, 0f, TILE_SCALE, true, owner, false);
                 if (owner != null) owner.hideEntity(TaiwanMahjongPlugin.this, back);
                 if (owner != null) {
-                    spawnTileDisplay(table, loc, tileModel(tile.type()), yaw, 0f, TILE_SCALE, false, owner, true);
+                    spawnTileDisplay(table, loc, tileModel(tile.type()), handFaceYaw(seat), 0f, TILE_SCALE, false, owner, true);
                     Interaction hitbox = spawnInteraction(table, interactionPointForHand(loc), 0.125f, 0.23f, owner);
                     clickActions.put(hitbox.getUniqueId(), ClickAction.discard(table.id, seat, tile.id()));
                 }
@@ -1057,10 +1094,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
                     world.getBlockAt(table.x + dx, table.y + 1, table.z + dz).setType(carpet, false);
                 }
             }
-            int[][] seats = {{0, 2}, {-2, 0}, {0, -2}, {2, 0}};
-            for (int[] offset : seats) {
-                world.getBlockAt(table.x + offset[0], table.y, table.z + offset[1]).setType(Material.OAK_SLAB, false);
-            }
+            removeLegacySeatSlabs(table);
         }
 
         void removePhysicalTable(Table table) {
@@ -1072,9 +1106,16 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
                     world.getBlockAt(table.x + dx, table.y + 1, table.z + dz).setType(Material.AIR, false);
                 }
             }
+            removeLegacySeatSlabs(table);
+        }
+
+        void removeLegacySeatSlabs(Table table) {
+            World world = table.world();
+            if (world == null) return;
             int[][] seats = {{0, 2}, {-2, 0}, {0, -2}, {2, 0}};
             for (int[] offset : seats) {
-                world.getBlockAt(table.x + offset[0], table.y, table.z + offset[1]).setType(Material.AIR, false);
+                Block block = world.getBlockAt(table.x + offset[0], table.y, table.z + offset[1]);
+                if (block.getType() == Material.OAK_SLAB) block.setType(Material.AIR, false);
             }
         }
 
@@ -1154,6 +1195,7 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
                     String id = parts[0];
                     String name = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
                     Table table = new Table(id, name, parts[2], Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
+                    if (parts.length >= 7) table.blockProtection = Boolean.parseBoolean(parts[6]);
                     tables.put(id, table);
                     try { nextTableId = Math.max(nextTableId, Integer.parseInt(id) + 1); }
                     catch (NumberFormatException ignored) { }
@@ -1169,10 +1211,10 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
                 File folder = getDataFolder();
                 if (!folder.exists() && !folder.mkdirs()) return;
                 List<String> lines = new ArrayList<>();
-                lines.add("# id\\tbase64_name\\tworld\\tx\\ty\\tz");
+                lines.add("# id\\tbase64_name\\tworld\\tx\\ty\\tz\\tblock_protection");
                 for (Table table : tables.values()) {
                     String name = Base64.getUrlEncoder().withoutPadding().encodeToString(table.name.getBytes(StandardCharsets.UTF_8));
-                    lines.add(table.id + "\t" + name + "\t" + table.worldName + "\t" + table.x + "\t" + table.y + "\t" + table.z);
+                    lines.add(table.id + "\t" + name + "\t" + table.worldName + "\t" + table.x + "\t" + table.y + "\t" + table.z + "\t" + table.blockProtection);
                 }
                 Files.write(new File(folder, "tables.tsv").toPath(), lines, StandardCharsets.UTF_8);
             } catch (IOException ex) {
@@ -1280,6 +1322,11 @@ public final class TaiwanMahjongPlugin extends JavaPlugin implements Listener, C
             case 2 -> 0f;
             default -> -90f;
         };
+    }
+
+    private static float handFaceYaw(int seat) {
+        float yaw = seatYaw(seat) + 180f;
+        return yaw > 180f ? yaw - 360f : yaw;
     }
 
     private static int[] cardinalForward(float yaw) {

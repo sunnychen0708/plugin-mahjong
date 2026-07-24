@@ -96,6 +96,7 @@ require-resource-pack=true
 | `/mahjong score` | 查看目前分數 | 無 |
 | `/mahjong rules` | 查看插件採用的台麻規則 | 無 |
 | `/mahjong rerender` | 重新生成牌與操作按鈕的顯示實體 | 無 |
+| `/mahjong protection <編號> <on\|off>` | 切換指定牌桌的方塊保護；新牌桌預設開啟 | 管理員 |
 | `/mahjong destroy <編號>` | 刪除牌桌及其顯示實體 | 管理員 |
 
 ---
@@ -134,6 +135,12 @@ require-resource-pack=true
 
 ```text
 mahjongplay.command.create
+```
+
+切換牌桌方塊保護需要：
+
+```text
+mahjongplay.command.protection
 ```
 
 若未設定權限插件，也可直接授予玩家 OP 權限。

@@ -17,6 +17,9 @@ permissions:
   mahjongplay.command.destroy:
     description: 刪除實體麻將牌桌
     default: op
+  mahjongplay.command.protection:
+    description: 切換麻將牌桌方塊保護
+    default: op
   mahjongplay.command.bot:
     description: 加入電腦玩家
     default: true
