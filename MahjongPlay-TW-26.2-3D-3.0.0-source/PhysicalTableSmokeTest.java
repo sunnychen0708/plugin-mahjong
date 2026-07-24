@@ -3,6 +3,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +29,19 @@ public final class PhysicalTableSmokeTest {
     plugin.onEnable();
     boolean ok = plugin.onCommand(player, new Command(), "mahjong", new String[]{"create", "測試牌桌"});
     if (!ok) throw new AssertionError("command returned false");
-    if (world.blocks.size() < 22) throw new AssertionError("physical table did not create enough blocks: " + world.blocks.size());
+    long physicalBlocks = world.blocks.values().stream().filter(block -> block.type != Material.AIR).count();
+    if (physicalBlocks != 18) throw new AssertionError("physical table should contain only the 3x3 fence/carpet structure: " + physicalBlocks);
+    if (world.blocks.values().stream().anyMatch(block -> block.type == Material.OAK_SLAB)) {
+      throw new AssertionError("seat slabs must not be generated");
+    }
+    Block tableBlock = world.getBlockAt(0, 64, 4);
+    BlockBreakEvent protectedBreak = new BlockBreakEvent(tableBlock, player);
+    plugin.onBlockBreak(protectedBreak);
+    if (!protectedBreak.isCancelled()) throw new AssertionError("new tables must enable block protection by default");
+    plugin.onCommand(player, new Command(), "mahjong", new String[]{"protection", "1", "off"});
+    BlockBreakEvent unprotectedBreak = new BlockBreakEvent(tableBlock, player);
+    plugin.onBlockBreak(unprotectedBreak);
+    if (unprotectedBreak.isCancelled()) throw new AssertionError("disabled block protection must allow block breaking");
     if (world.entities.size() < 6) throw new AssertionError("3D/lobby entities missing: " + world.entities.size());
     long interactions = world.entities.stream().filter(e -> e instanceof Interaction).count();
     if (interactions < 1) throw new AssertionError("center interaction missing");
@@ -39,8 +52,34 @@ public final class PhysicalTableSmokeTest {
     long activeInteractions = world.entities.stream().filter(e -> e instanceof Interaction && !((BaseEntity)e).removed).count();
     if (itemDisplays < 70) throw new AssertionError("3D game tiles missing: " + itemDisplays);
     if (activeInteractions < 10) throw new AssertionError("clickable hand interactions missing: " + activeInteractions);
+    List<MockItemDisplay> privateHandFaces = player.shown.stream()
+        .filter(e -> e instanceof MockItemDisplay)
+        .map(e -> (MockItemDisplay)e)
+        .toList();
+    if (privateHandFaces.isEmpty()) throw new AssertionError("private hand faces were not shown to their owner");
+    if (privateHandFaces.stream().anyMatch(display -> Math.abs(display.matrix.yawRadians) > 0.0001f)) {
+      throw new AssertionError("seat 0 private hand faces must point toward their owner");
+    }
+    List<MockItemDisplay> hiddenHandBacks = player.hidden.stream()
+        .filter(e -> e instanceof MockItemDisplay)
+        .map(e -> (MockItemDisplay)e)
+        .toList();
+    if (hiddenHandBacks.isEmpty()) throw new AssertionError("public hand backs were not hidden from their owner");
+    if (hiddenHandBacks.stream().anyMatch(display -> Math.abs(Math.abs(display.matrix.yawRadians) - Math.PI) > 0.0001)) {
+      throw new AssertionError("seat 0 public hand backs must retain their table-facing rotation");
+    }
     plugin.onDisable();
-    System.out.println("PhysicalTableSmokeTest: blocks=" + world.blocks.size() + ", live item displays=" + itemDisplays + ", live interactions=" + activeInteractions);
+    TaiwanMahjongPlugin reloaded = new TaiwanMahjongPlugin();
+    reloaded.onEnable();
+    BlockBreakEvent persistedUnprotectedBreak = new BlockBreakEvent(tableBlock, player);
+    reloaded.onBlockBreak(persistedUnprotectedBreak);
+    if (persistedUnprotectedBreak.isCancelled()) throw new AssertionError("block protection setting must survive reload");
+    MockBlock legacySeat = (MockBlock)world.getBlockAt(0, 64, 6);
+    legacySeat.setType(Material.OAK_SLAB);
+    reloaded.onCommand(player, new Command(), "mahjong", new String[]{"destroy", "1"});
+    if (legacySeat.type != Material.AIR) throw new AssertionError("destroy must remove legacy seat slabs");
+    reloaded.onDisable();
+    System.out.println("PhysicalTableSmokeTest: physical blocks=" + physicalBlocks + ", live item displays=" + itemDisplays + ", live interactions=" + activeInteractions);
   }
 
   static final class MockServer implements Server {
@@ -75,7 +114,8 @@ public final class PhysicalTableSmokeTest {
     public void setViewRange(float r){} public void setBrightness(Brightness b){} public void setBillboard(Billboard b){}
   }
   public static final class MockItemDisplay extends BaseDisplay implements ItemDisplay {
-    public void setItemStack(ItemStack s){} public void setItemDisplayTransform(ItemDisplayTransform t){} public void setTransformationMatrix(Matrix4f m){}
+    Matrix4f matrix;
+    public void setItemStack(ItemStack s){} public void setItemDisplayTransform(ItemDisplayTransform t){} public void setTransformationMatrix(Matrix4f m){matrix=m;}
   }
   static final class MockTextDisplay extends BaseDisplay implements TextDisplay {
     public void setText(String s){} public void setShadowed(boolean v){} public void setSeeThrough(boolean v){}
@@ -85,9 +125,10 @@ public final class PhysicalTableSmokeTest {
   }
   static final class MockPlayer extends BaseEntity implements Player {
     final UUID id=UUID.randomUUID(); final MockWorld world; final List<String> messages=new ArrayList<>();
+    final List<Entity> shown=new ArrayList<>(); final List<Entity> hidden=new ArrayList<>();
     MockPlayer(MockWorld w){world=w;} public UUID getUniqueId(){return id;} public String getName(){return "Tester";}
     public Location getLocation(){Location l=new Location(world,0,65,0);l.setYaw(0);return l;}
-    public void showEntity(Plugin p,Entity e){} public void hideEntity(Plugin p,Entity e){}
+    public void showEntity(Plugin p,Entity e){shown.add(e);} public void hideEntity(Plugin p,Entity e){hidden.add(e);}
     public void sendMessage(String m){messages.add(m);} public boolean hasPermission(String p){return true;}
   }
 }
