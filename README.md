@@ -1,4 +1,4 @@
-# MahjongPlay 台灣 16 張麻將 3D 版
+# Mahjong 台灣 16 張麻將 3D 版
 
 適用於 **Paper 26.2** 的繁體中文 Minecraft 台灣麻將插件。
 
