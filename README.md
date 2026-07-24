@@ -7,18 +7,6 @@
 - 顯示方式：3D 麻將牌、實體牌桌與互動按鈕
 - 支援模式：4 位真人，或以電腦玩家補滿
 - 執行環境：Java 21
-
-> [!WARNING]
-> ## 安裝前請先刪除舊版本
->
-> 請將以下舊版插件或其他同名麻將插件移出伺服器的 `plugins` 資料夾：
->
-> - `MahjongPlay-1.2.0.jar`
-> - `MahjongPlay-TW-26.2-2.0.0.jar`
-> - 其他同名 MahjongPlay 插件
->
-> 同時安裝多個版本會造成 `/mahjong` 指令衝突，並可能載入錯誤版本。
-
 ---
 
 ## 目錄
@@ -77,24 +65,7 @@
 
 未安裝材質包時，麻將牌會顯示為普通紙張。
 
-### 方式 A：每位玩家自行安裝
-
-1. 將 `MahjongPlay-TW-26.2-3D-ResourcePack.zip` 放入 Minecraft 材質包資料夾。
-
-Windows 路徑：
-
-```text
-%APPDATA%\.minecraft\resourcepacks
-```
-
-2. 開啟 Minecraft。
-3. 進入「選項」→「資源包」。
-4. 啟用「MahjongPlay 台灣麻將 3D」。
-
-> [!NOTE]
-> 不要解壓縮材質包 ZIP。
-
-### 方式 B：伺服器自動發送
+### 伺服器自動發送
 
 1. 將 `MahjongPlay-TW-26.2-3D-ResourcePack.zip` 上傳至可直接下載檔案的 HTTPS 網址。
 2. 編輯 `server.properties`：
