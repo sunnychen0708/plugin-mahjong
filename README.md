@@ -2,7 +2,7 @@
 
 適用於 **Paper 26.2** 的繁體中文 Minecraft 台灣麻將插件。
 
-- 插件版本：`3.0.0`
+- 插件版本：`3.1.0`
 - 遊戲規則：台灣 16 張麻將
 - 顯示方式：3D 麻將牌、實體牌桌與互動按鈕
 - 支援模式：4 位真人，或以電腦玩家補滿
@@ -27,7 +27,7 @@
 ## 插件安裝
 
 1. 關閉 Minecraft 伺服器。
-2. 將 `MahjongPlay-TW-26.2-3D-3.0.0.jar` 放入伺服器的 `plugins` 資料夾。
+2. 將 `MahjongPlay-TW-26.2-3D-3.1.0.jar` 放入伺服器的 `plugins` 資料夾。
 3. 啟動伺服器。
 4. 輸入 `/plugins`，確認 `MahjongPlayTW` 顯示為綠色。
 
@@ -164,7 +164,7 @@ f03dd1ca5d63db9103f38192ca16ebfa0aba248a
 ### 插件 JAR SHA-256
 
 ```text
-bda49e5c6dedf47461b3ddbfb488a967b604c32dc3b80236c3653816991887ce
+6dff09562fc0756e97fbe936b0394bd8db6f87a7bbc38076154e3f81acda898d
 ```
 
 可使用校驗值確認下載的檔案未損壞、未被重新壓縮或修改。

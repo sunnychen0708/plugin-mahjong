@@ -1,4 +1,4 @@
-MahjongPlay-TW 3D 3.0.0 source
+MahjongPlay-TW 3D 3.1.0 source
 
 src/            Plugin and Taiwanese Mahjong engine source
 resources/      plugin.yml
