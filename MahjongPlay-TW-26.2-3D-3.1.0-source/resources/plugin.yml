@@ -1,5 +1,5 @@
 name: MahjongPlayTW
-version: '3.0.0'
+version: '3.1.0'
 main: com.mahjongplay.tw.TaiwanMahjongPlugin
 api-version: '26.2'
 author: OpenAI adaptation
